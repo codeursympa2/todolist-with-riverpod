@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
 import 'package:todolist_with_riverpod/providers/task_provider.dart';
@@ -17,9 +18,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  late final AppLifecycleListener _listener;
-
-
   @override
   Widget build(BuildContext context) {
     final state=ref.watch(taskProvider);
@@ -30,7 +28,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(roundedCardTask)),
         icon: const Icon(Icons.add_to_photos, color: secondary),
         onPressed: () {
-          // Action pour le bouton
+          return context.go('/task');
         },
         label: Row(
           children: [

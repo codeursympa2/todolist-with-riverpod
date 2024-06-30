@@ -30,7 +30,8 @@ class TaskEmptyState extends TaskState {
 
 // Etat de succès après une opération
 class TaskSuccessState extends TaskState {
-  const TaskSuccessState();
+  final String message;
+  const TaskSuccessState(this.message);
 }
 
 // Etat d'échec avec un message d'erreur

@@ -16,9 +16,20 @@ final _router= GoRouter(
       builder: (context, state) => HomePage(),
       routes: [
         GoRoute(
-          path:':id',
-          builder: (context,state) => TaskPage(state.pathParameters['id'] as int)
-        )
+          name: 'update',
+          path: 'task/:id',
+          builder: (context, state) {
+            final idString = state.pathParameters['id'];
+            return TaskPage(id: idString);
+          },
+        ),
+        GoRoute(
+          name:"create",
+          path: 'task',
+          builder: (context, state) {
+            return TaskPage();
+          },
+        ),
       ]
     ),
 

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:todolist_with_riverpod/data/domain/task.dart';
 import 'package:todolist_with_riverpod/data/services/database_service.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
+
 final Provider<DatabaseService> databaseService = Provider((ref) => DatabaseService.instance);
 
 final taskProvider = StateNotifierProvider<TaskNotifier, TaskState>(
@@ -13,6 +13,7 @@ final taskProvider = StateNotifierProvider<TaskNotifier, TaskState>(
 class TaskNotifier extends StateNotifier<TaskState> {
   final Ref ref;
   final DatabaseService _service;
+  late final int resultQuery;
 
   static const errorMessage = "Echec du traitement de la requête.";
 
@@ -44,17 +45,30 @@ class TaskNotifier extends StateNotifier<TaskState> {
   }
 
   Future<void> saveTask(Task task) async {
+    late final String typeOperation;
     try {
-      int resultQuery;
       if (task.id == null) {
         resultQuery = await _service.addTask(task);
+        typeOperation="ajoutée";
       } else {
         resultQuery = await _service.updateTask(task);
+        typeOperation="modifiée";
       }
 
-      if (resultQuery == 1) state = TaskSuccessState();
+      if (resultQuery == 1) state = TaskSuccessState("Tâche $typeOperation");
     } catch (e) {
       state = TaskFailureState(errorMessage);
+      throw Exception();
+    }
+  }
+
+  Future<void> deleteTask(Task task)async{
+    try{
+      resultQuery= await this._service.deleteTask(task);
+      if(resultQuery == 1) state=TaskSuccessState("Tâche supprimée");
+    }catch(e){
+      state = TaskFailureState(errorMessage);
+      throw Exception();
     }
   }
 

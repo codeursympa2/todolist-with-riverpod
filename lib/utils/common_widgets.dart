@@ -55,3 +55,34 @@ Widget contentHomePage(state){
     );
   }
 }
+
+Widget texEditingField(
+    {
+      required  TextEditingController ctrl,
+      required String label,
+      required int maxLines,
+      required FocusNode focusNode,
+      required TextInputAction textInputAction,
+      required void Function(String value) onChanged,
+      required String? Function(String?) validator,
+      bool focused=false
+    })
+{
+  return TextFormField(
+    controller: ctrl,
+    maxLines: maxLines,
+    autofocus: focused,
+    focusNode: focusNode,
+    textInputAction: textInputAction,
+    //autovalidateMode: AutovalidateMode.onUserInteraction,
+    decoration: InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(),
+    ),
+    validator: validator,
+    onChanged: onChanged,
+  );
+
+}
+
+

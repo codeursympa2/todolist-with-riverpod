@@ -1,12 +1,12 @@
 class Task{
   int? id;
   String name;
-  String? desc;
+  String desc;
   bool isCompleted=false;
 
   Task({required this.id, required this.name, required this.desc, required isCompleted});
 
-  Task.withoutDesc(this.id, this.name);
+  Task.withoutId(this.name,this.desc);
   Task.updateTask(this.name,this.desc,this.isCompleted);
 
 
