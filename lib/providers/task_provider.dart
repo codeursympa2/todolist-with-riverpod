@@ -56,7 +56,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
         typeOperation="modifiée";
       }
       //On patiente 3 secondes pour pouvoir afficher la barre de progression
-      await Future.delayed(Duration(seconds: 3),
+      await Future.delayed(Duration(seconds: 1),
               () => state = TaskSuccessState("Tâche $typeOperation."));
 
     } catch (e) {

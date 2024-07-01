@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
 import 'package:todolist_with_riverpod/constants/strings.dart';
+import 'package:todolist_with_riverpod/providers/form/task_form_state.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
 
 //Representation du logo
@@ -94,6 +95,14 @@ void toastMessage({required BuildContext context, required String message, requi
         backgroundColor: color,
         content: Text(message)
     ));
+}
+
+ElevatedButton elevatedButton(
+  {required String label, required VoidCallback? action}){
+  return ElevatedButton(
+    onPressed: action,
+    child: Text(label),
+  );
 }
 
 

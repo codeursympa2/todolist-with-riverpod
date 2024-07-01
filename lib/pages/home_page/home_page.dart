@@ -18,6 +18,16 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  late final AppLifecycleListener _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _listener=AppLifecycleListener(
+      onStateChange: _onStateChanged,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state=ref.watch(taskProvider);
@@ -41,6 +51,19 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+
+  @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
+  }
+
+  void _onStateChanged(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      print("resume");
+      ref.read(taskProvider.notifier).getTasks();
+    }
+  }
 
 }
 

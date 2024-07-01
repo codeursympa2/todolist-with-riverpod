@@ -21,6 +21,7 @@ class TaskPage extends ConsumerWidget {
   Widget build(BuildContext context,WidgetRef ref) {
     //On écoute les changements d'etats de TaskState
     ref.listen<TaskState>(taskProvider, (TaskState? previousState,TaskState state){
+      //Barre de progression
       if(state is TaskLoadingState){
         showDialog(
             context: context,
@@ -33,21 +34,19 @@ class TaskPage extends ConsumerWidget {
         );
       }
       if (state is TaskSuccessState){
+        //on vide le formulaire
+        ref.read(taskFormProvider.notifier).validForm(Task.withoutId("", ""));
         context.go("/"); //retour sur home
+        //Actualisation des données
+        ref.read(taskProvider.notifier).getTasks();
         //Affichage du message
         toastMessage(context: context, message: state.message, color: primary);
       }
-
       if(state is TaskFailureState){
         toastMessage(context: context, message: state.error, color: danger);
       }
 
-
-
-
     });
-
-    
 
     return  Scaffold(
       appBar: AppBar(
@@ -77,6 +76,7 @@ class _FormContent extends ConsumerWidget{
       _nameController.text="";
       _descController.text="";
     }
+
     return Padding(padding: EdgeInsets.all(16),
       child: Form(
         key: _formKey,
@@ -139,9 +139,8 @@ class _FormContent extends ConsumerWidget{
                   onFieldSubmitted: (value){
                     //Si le formulaire est valide
                     if(_formKey.currentState!.validate()){
-                      Task t=Task.withoutId(_nameController.text, _descController.text);
-                      FocusScope.of(context).unfocus(); //Suppression du focus sur le champs fermeture du claviier
-                      ref.read(taskProvider.notifier).saveTask(t); //sauvegarde
+                      final task=Task.withoutId(_nameController.text, _descController.text);
+                      _logicToSave(context,ref, task);
                     }
                   }
               );
@@ -153,31 +152,35 @@ class _FormContent extends ConsumerWidget{
               children: [
                 Consumer(builder: (context,ref,child){
                   final state =ref.watch(taskFormProvider);
-                  return ElevatedButton(
-                    onPressed:
-                    state is TaskFormValidated ? (){
-                      if (_formKey.currentState!.validate()) {
-                        FocusScope.of(context).unfocus();
-                        ref.read(taskProvider.notifier).saveTask(Task.withoutId(_nameController.text, _descController.text));
-                      }
-                    }:
-                    null,
-                    child: Text('Valider'),
-                  );
-
+                  return elevatedButton(
+                      label: "Valider",
+                      action: state is TaskFormValidated ? (){
+                          if (_formKey.currentState!.validate()) {
+                            final task=Task.withoutId(_nameController.text, _descController.text);
+                            _logicToSave(context, ref, task);
+                          }
+                        }:
+                        null
+                      );
                 }),
                 SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
+                elevatedButton(
+                  action: () {
                     context.go('/'); // Annuler et retourner à la page précédente
                   },
-                  child: Text('Annuler'),
+                  label: 'Annuler',
                 ),
               ],
             ),
           ],),
       ),
     );
+  }
+
+  void _logicToSave(BuildContext context,WidgetRef ref,Task taskSave){
+    FocusScope.of(context).unfocus(); //Suppression du focus sur le champs fermeture du clavier
+    //Sauvegarde
+    ref.read(taskProvider.notifier).saveTask(Task.withoutId(taskSave.name,taskSave.desc));
   }
 
 }

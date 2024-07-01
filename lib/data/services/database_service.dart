@@ -58,7 +58,7 @@ class DatabaseService{
     Future<List<Task>> getAllTasks() async {
       final db = await instance.db;
 
-      final maps = await db.query(_tableName, orderBy: "id");
+      final maps = await db.query(_tableName, orderBy: "id DESC");
       return List.generate(maps.length, (i) {
         return Task.fromJson(maps[i]);
       });
