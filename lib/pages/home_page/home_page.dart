@@ -60,7 +60,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _onStateChanged(AppLifecycleState state) {
     if(state == AppLifecycleState.resumed){
-      print("resume");
       ref.read(taskProvider.notifier).getTasks();
     }
   }

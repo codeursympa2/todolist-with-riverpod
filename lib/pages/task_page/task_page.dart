@@ -36,7 +36,7 @@ class TaskPage extends ConsumerWidget {
       if (state is TaskSuccessState){
         //on vide le formulaire
         ref.read(taskFormProvider.notifier).validForm(Task.withoutId("", ""));
-        context.go("/"); //retour sur home
+        context.go("/home"); //retour sur home
         //Actualisation des données
         ref.read(taskProvider.notifier).getTasks();
         //Affichage du message
@@ -166,7 +166,7 @@ class _FormContent extends ConsumerWidget{
                 SizedBox(width: 16),
                 elevatedButton(
                   action: () {
-                    context.go('/'); // Annuler et retourner à la page précédente
+                    context.go('/home'); // Annuler et retourner à la page précédente
                   },
                   label: 'Annuler',
                 ),

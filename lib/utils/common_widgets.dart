@@ -12,7 +12,7 @@ Widget logo(){
       color: primary,
       borderRadius: BorderRadius.all(Radius.circular(40)),
     ),
-    padding: const EdgeInsets.all(7),
+    padding: const EdgeInsets.all(15),
     width: logoSize,
     height: logoSize,
     child: const Column(

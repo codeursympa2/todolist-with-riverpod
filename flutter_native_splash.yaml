@@ -1,6 +1,0 @@
-# Définition de la couleur de fond du splash screen
-color: "#FFFFFF"  
-
-# Définition des paramètres de la fenêtre
-android: true
-ios: true

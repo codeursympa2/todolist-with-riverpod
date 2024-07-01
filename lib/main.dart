@@ -6,6 +6,7 @@ import 'package:todolist_with_riverpod/constants/strings.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/pages/home_page/home_page.dart';
+import 'package:todolist_with_riverpod/pages/splash_screen/splash_screen.dart';
 import 'package:todolist_with_riverpod/pages/task_page/task_page.dart';
 
 
@@ -13,7 +14,7 @@ final _router= GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => const SplashScreen(),
       routes: [
         GoRoute(
           name: 'update',
@@ -30,6 +31,12 @@ final _router= GoRouter(
             return TaskPage();
           },
         ),
+        GoRoute(
+            path: 'home',
+            builder: (context, state) {
+              return const HomePage();
+            },
+        )
       ]
     ),
 
