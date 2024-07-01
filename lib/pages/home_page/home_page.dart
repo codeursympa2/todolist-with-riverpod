@@ -37,10 +37,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
       backgroundColor: secondary,
-      appBar: AppBar(
-        backgroundColor: secondary,
-        leading: logo(),
-      ),
       body: contentHomePage(state),
     );
   }

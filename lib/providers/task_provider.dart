@@ -13,7 +13,7 @@ final taskProvider = StateNotifierProvider<TaskNotifier, TaskState>(
 class TaskNotifier extends StateNotifier<TaskState> {
   final Ref ref;
   final DatabaseService _service;
-  late final int resultQuery;
+  int resultQuery=0;
 
   static const errorMessage = "Echec du traitement de la requête.";
 
@@ -46,6 +46,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
 
   Future<void> saveTask(Task task) async {
     late final String typeOperation;
+    state=TaskLoadingState();
     try {
       if (task.id == null) {
         resultQuery = await _service.addTask(task);
@@ -54,9 +55,12 @@ class TaskNotifier extends StateNotifier<TaskState> {
         resultQuery = await _service.updateTask(task);
         typeOperation="modifiée";
       }
+      //On patiente 3 secondes pour pouvoir afficher la barre de progression
+      await Future.delayed(Duration(seconds: 3),
+              () => state = TaskSuccessState("Tâche $typeOperation."));
 
-      if (resultQuery == 1) state = TaskSuccessState("Tâche $typeOperation");
     } catch (e) {
+      print(e);
       state = TaskFailureState(errorMessage);
       throw Exception();
     }
@@ -65,7 +69,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
   Future<void> deleteTask(Task task)async{
     try{
       resultQuery= await this._service.deleteTask(task);
-      if(resultQuery == 1) state=TaskSuccessState("Tâche supprimée");
+      state=TaskSuccessState("Tâche supprimée");
     }catch(e){
       state = TaskFailureState(errorMessage);
       throw Exception();

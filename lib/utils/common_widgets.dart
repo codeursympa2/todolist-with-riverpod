@@ -65,6 +65,7 @@ Widget texEditingField(
       required TextInputAction textInputAction,
       required void Function(String value) onChanged,
       required String? Function(String?) validator,
+      required void Function(String) onFieldSubmitted,
       bool focused=false
     })
 {
@@ -74,15 +75,25 @@ Widget texEditingField(
     autofocus: focused,
     focusNode: focusNode,
     textInputAction: textInputAction,
-    //autovalidateMode: AutovalidateMode.onUserInteraction,
+    autovalidateMode: AutovalidateMode.onUserInteraction,
     decoration: InputDecoration(
       labelText: label,
       border: OutlineInputBorder(),
     ),
     validator: validator,
     onChanged: onChanged,
+    onFieldSubmitted: onFieldSubmitted,
   );
 
+}
+
+void toastMessage({required BuildContext context, required String message, required Color color}){
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+        backgroundColor: color,
+        content: Text(message)
+    ));
 }
 
 
