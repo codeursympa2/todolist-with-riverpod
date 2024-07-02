@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/strings.dart';
-
-
 import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/pages/home_page/home_page.dart';
 import 'package:todolist_with_riverpod/pages/splash_screen/splash_screen.dart';
 import 'package:todolist_with_riverpod/pages/task_page/task_page.dart';
 
 
-final _router= GoRouter(
+final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
@@ -25,25 +23,28 @@ final _router= GoRouter(
           },
         ),
         GoRoute(
-          name:"create",
+          name: "create",
           path: 'task',
           builder: (context, state) {
             return TaskPage();
           },
         ),
         GoRoute(
-            path: 'home',
-            builder: (context, state) {
-              return const HomePage();
-            },
+          path: 'home',
+          builder: (context, state) {
+            // Une fois sur 'home', supprimer toutes les routes empilées jusqu'à '/'
+            //context. ('/');
+            return const HomePage();
+          },
         )
-      ]
+      ],
     ),
-
   ],
 );
 
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(ProviderScope(child:MyApp()));
 }
 
@@ -99,13 +100,16 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.normal,
             fontSize: 15,
             color: secondary
-          )
+          ),
         ),
+
         colorScheme: ColorScheme.fromSeed(seedColor: primary),
         useMaterial3: true,
       ),
       routerConfig: _router,
     );
   }
+
+
 }
 

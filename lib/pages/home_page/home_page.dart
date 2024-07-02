@@ -48,6 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       backgroundColor: secondary,
       body: contentHomePage(state),
+
     );
   }
 
