@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
 import 'package:todolist_with_riverpod/providers/task_provider.dart';
+import 'package:todolist_with_riverpod/providers/task_state.dart';
 import 'package:todolist_with_riverpod/utils/common_widgets.dart';
 
 
@@ -30,6 +31,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(taskProvider, (TaskState? previewState,TaskState state){
+      if(state is TaskSuccessState){
+        toastMessage(context: context, message: state.message, color: primary);
+      }
+    });
+
     final state=ref.watch(taskProvider);
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

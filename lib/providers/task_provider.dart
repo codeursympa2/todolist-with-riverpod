@@ -30,7 +30,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
 
     try {
       // Simulation de chargement de 2 secondes de la barre de progression
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       //Recupération des données
       this._getDataWithChangeState();
 
@@ -63,7 +63,10 @@ class TaskNotifier extends StateNotifier<TaskState> {
 
   Future<void> deleteTask(Task task)async{
     try{
-      resultQuery= await this._service.deleteTask(task);
+      await this._service.deleteTask(task);
+      //On recharge les données
+      _getDataWithChangeState();
+      //Message
       state=TaskSuccessState("Tâche supprimée");
     }catch(e){
       state = TaskFailureState(errorMessage);

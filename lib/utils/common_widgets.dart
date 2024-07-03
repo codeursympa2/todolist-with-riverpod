@@ -49,11 +49,28 @@ Widget contentHomePage(TaskState state,WidgetRef ref){
       itemBuilder: (context, index) {
         // Utilisez l'état chargé pour afficher les tâches
         var task=state.todos[index];
-        return _taskItem(context, task,(){
-          //Mise à jour état de la tâche
-          task.isCompleted= task.isCompleted == 1 ? 0 :1 ;
-          ref.read(taskProvider.notifier).updateTaskIsCompleted(task);
-        });
+        return Dismissible(
+            key: Key(task.id.toString()),
+            direction: DismissDirection.startToEnd,
+            onDismissed: (direction) async {
+               //suppression
+                ref.read(taskProvider.notifier).deleteTask(task);
+            },
+            background: Container(
+              color: danger,
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Icon(
+                Icons.delete_forever,
+                color: Colors.white,
+                size: 30.0,
+              ),
+            ),
+            child: _taskItem(context, task,(){
+              //Mise à jour état de la tâche
+              task.isCompleted= task.isCompleted == 1 ? 0 :1 ;
+              ref.read(taskProvider.notifier).updateTaskIsCompleted(task);
+            }));
       },
     );
    
@@ -170,7 +187,7 @@ Widget _taskItem(BuildContext context,Task task,VoidCallback actionIconButton){
         overflow: TextOverflow.visible,
         maxLines: 2
         ,style: Theme.of(context).textTheme.bodyMedium,),
-      leading: _leftBarCardTask(task),
+      leading: _leftVerticalBarTask(task),
       title:Text("${task.name}",style: Theme.of(context).textTheme.headlineMedium,),
       trailing: _iconTaskCardTransition(task,actionIconButton ),
     ),
@@ -192,7 +209,7 @@ Widget _iconButton(VoidCallback action,Color color){
   );
 }
 
-Widget _leftBarCardTask(Task task){
+Widget _leftVerticalBarTask(Task task){
   return Container(
     width: 5,
     decoration: BoxDecoration(
