@@ -47,7 +47,22 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
       backgroundColor: secondary,
-      body: contentHomePage(state),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Center(child: Text("Liste des tâches",style: Theme.of(context).textTheme.headlineLarge,)),
+              //Chip options
+              const SizedBox(height: 10,),
+              Expanded(
+                child: contentHomePage(state,ref),
+              )
+            ],
+          ),
+        ),
+      ),
+
 
     );
   }

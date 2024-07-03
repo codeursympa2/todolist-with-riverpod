@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todolist_with_riverpod/constants/strings.dart';
 import 'package:todolist_with_riverpod/data/domain/task.dart';
 import 'package:todolist_with_riverpod/data/services/database_service.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
@@ -30,15 +31,9 @@ class TaskNotifier extends StateNotifier<TaskState> {
     try {
       // Simulation de chargement de 2 secondes de la barre de progression
       await Future.delayed(const Duration(seconds: 2));
+      //Recupération des données
+      this._getDataWithChangeState();
 
-      // Traitement de la requête
-      final taskList = await _service.getAllTasks();
-
-      if (taskList.isEmpty) {
-        state = TaskEmptyState("Pas de tâches disponibles.");
-      } else {
-        state = TaskLoadedState(todos: taskList);
-      }
     } catch (e) {
       state = TaskFailureState(errorMessage);
     }
@@ -49,10 +44,10 @@ class TaskNotifier extends StateNotifier<TaskState> {
     state=TaskLoadingState();
     try {
       if (task.id == null) {
-        resultQuery = await _service.addTask(task);
+        await _service.addTask(task);
         typeOperation="ajoutée";
       } else {
-        resultQuery = await _service.updateTask(task);
+        await _service.updateTask(task.id!,task.toJsonUpdate());
         typeOperation="modifiée";
       }
       //On patiente 3 secondes pour pouvoir afficher la barre de progression
@@ -79,5 +74,24 @@ class TaskNotifier extends StateNotifier<TaskState> {
   void disposeResources() {
     // Logique pour libérer les ressources
     _service.closeConnexion();
+  }
+
+  //Valider/Invalider une tâche
+  Future<void> updateTaskIsCompleted(Task task) async{
+    //On fait la mise à jour en cliquant sur le bouton
+    await _service.updateTask(task.id!,task.toJsonUpdateIsCompleted());
+    //Rechargement des données
+    await _getDataWithChangeState();
+  }
+
+  Future<void> _getDataWithChangeState() async{
+    //On recupère la liste
+    final taskList = await _service.getAllTasks();
+    if(taskList.isNotEmpty){
+      //On change l'etat
+      state=TaskLoadedState(todos: taskList);
+    }else{
+      state=TaskEmptyState(noData);
+    }
   }
 }

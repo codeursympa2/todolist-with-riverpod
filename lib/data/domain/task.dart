@@ -2,9 +2,9 @@ class Task{
   int? id;
   String name;
   String desc;
-  bool isCompleted=false;
+  int isCompleted=0;
 
-  Task({required this.id, required this.name, required this.desc, required isCompleted});
+  Task({required this.id, required this.name, required this.desc, required this.isCompleted});
 
   Task.withoutId(this.name,this.desc);
   Task.updateTask(this.name,this.desc,this.isCompleted);
@@ -22,7 +22,7 @@ class Task{
    json['id']=id;
    json['name']=name;
    json['desc']=desc;
-   json['isCompleted']= this._getValue(isCompleted);
+   json['isCompleted']= isCompleted;
 
    return json;
   }
@@ -31,14 +31,20 @@ class Task{
     final Map<String,dynamic> json=<String,dynamic>{};
     json['name']=name;
     json['desc']=desc;
-    json['isCompleted']= this._getValue(isCompleted);
+    json['isCompleted']= isCompleted;
 
     return json;
   }
 
-  int _getValue(bool value){
-    //1:True 0:False
-    return value ? 1 : 0;
+  Map<String,dynamic> toJsonUpdateIsCompleted(){
+    final Map<String,dynamic> json=<String,dynamic>{};
+    json['isCompleted']= isCompleted;
+    return json;
   }
 
+
+  @override
+  String toString() {
+    return 'Task{id: $id, name: $name, desc: $desc, isCompleted: $isCompleted}';
+  }
 }

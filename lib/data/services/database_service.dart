@@ -84,12 +84,14 @@ class DatabaseService{
 
 
     //Mise à jour d'une tâche
-    Future<int> updateTask(Task task) async{
+    Future<int> updateTask( int id,Map<String, Object?> values) async{
       final db = await instance.db;
-
-      final taskUpdate=Task.updateTask(task.name, task.desc,task.isCompleted);
-      final result=await db.update(_tableName, taskUpdate.toJsonUpdate());
-
+      final result=await db.update(
+          _tableName,
+          values,
+          where: 'id=?',
+          whereArgs: [id]
+      );
       return result;
     }
 

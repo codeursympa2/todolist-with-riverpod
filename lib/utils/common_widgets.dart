@@ -1,9 +1,12 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
 import 'package:todolist_with_riverpod/constants/strings.dart';
+import 'package:todolist_with_riverpod/data/domain/task.dart';
+import 'package:todolist_with_riverpod/providers/task_provider.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
 
 //Representation du logo
@@ -11,9 +14,9 @@ Widget logo(){
   return Container(
     decoration: const BoxDecoration(
       color: primary,
-      borderRadius: BorderRadius.all(Radius.circular(40)),
+      borderRadius: BorderRadius.all(Radius.circular(radiusLogo)),
     ),
-    padding: const EdgeInsets.all(15),
+    padding: const EdgeInsets.all(paddingLogo),
     width: logoSize,
     height: logoSize,
     child: const Column(
@@ -31,7 +34,7 @@ Widget logo(){
   );
 }
 
-Widget contentHomePage(TaskState state){
+Widget contentHomePage(TaskState state,WidgetRef ref){
   if (state is TaskInitialState) {
     return Container();
   } else if (state is TaskLoadingState) {
@@ -41,16 +44,19 @@ Widget contentHomePage(TaskState state){
   } else if (state is TaskEmptyState) {
     return Center(child: Text(state.error));
   } else if (state is TaskLoadedState) {
-    // Utilisez l'état chargé pour afficher les tâches
     return ListView.builder(
       itemCount: state.todos.length,
       itemBuilder: (context, index) {
-        final task = state.todos[index];
-        return ListTile(
-          title: Text(task.name),
-        );
+        // Utilisez l'état chargé pour afficher les tâches
+        var task=state.todos[index];
+        return _taskItem(context, task,(){
+          //Mise à jour état de la tâche
+          task.isCompleted= task.isCompleted == 1 ? 0 :1 ;
+          ref.read(taskProvider.notifier).updateTaskIsCompleted(task);
+        });
       },
     );
+   
   } else {
     return Center(
       child: Text("Echec de connexion à la source de données"),
@@ -145,5 +151,55 @@ OutlineInputBorder _inputBorder({required Color borderColor}){
       color: borderColor
     ),
     borderRadius: BorderRadius.all(Radius.circular(roundedTextInput)),
+  );
+}
+
+
+Widget _taskItem(BuildContext context,Task task,VoidCallback actionIconButton){
+  return Card(
+
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(roundedCardTask),
+    ),
+    color: secondary,
+    elevation: 5,
+    child: ListTile(
+      onTap: (){},
+      contentPadding: const EdgeInsets.symmetric(vertical: 9,horizontal: 9),
+      subtitle: Text(task.desc,
+        overflow: TextOverflow.visible,
+        maxLines: 2
+        ,style: Theme.of(context).textTheme.bodyMedium,),
+      leading: _leftBarCardTask(task),
+      title:Text("${task.name}",style: Theme.of(context).textTheme.headlineMedium,),
+      trailing: _iconTaskCardTransition(task,actionIconButton ),
+    ),
+  );
+}
+
+Widget _iconTaskCardTransition(Task task,VoidCallback action){
+  if(task.isCompleted == 1){
+    return _iconButton(action, primary);
+  }else{
+    return _iconButton(action, shadow);
+  }
+}
+
+Widget _iconButton(VoidCallback action,Color color){
+  return IconButton(
+    onPressed: action,
+    icon: Icon(Icons.check_circle,color: color,size: iconTaskItem,),
+  );
+}
+
+Widget _leftBarCardTask(Task task){
+  return Container(
+    width: 5,
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+            Radius.circular(roundedCardTask)
+        ),
+        color: task.isCompleted == 1 ? primary : shadow
+    ),
   );
 }
