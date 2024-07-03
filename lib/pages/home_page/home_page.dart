@@ -83,7 +83,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _onStateChanged(AppLifecycleState state) {
     if(state == AppLifecycleState.resumed){
-      ref.read(taskProvider.notifier).getTasks();
+      ref.read(taskProvider.notifier).getDataWithoutLoadingList();
     }
   }
 

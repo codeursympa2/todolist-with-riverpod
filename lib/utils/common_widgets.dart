@@ -222,3 +222,9 @@ Widget _leftVerticalBarTask(Task task){
     ),
   );
 }
+
+Future<void> back(BuildContext context,WidgetRef ref) async {
+  context.go('/home');
+  //rechargement
+  await ref.read(taskProvider.notifier).getDataWithoutLoadingList();
+}

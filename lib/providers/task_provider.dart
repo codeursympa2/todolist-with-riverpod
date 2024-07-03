@@ -32,7 +32,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
       // Simulation de chargement de 2 secondes de la barre de progression
       await Future.delayed(const Duration(seconds: 1));
       //Recupération des données
-      this._getDataWithChangeState();
+      this.getDataWithoutLoadingList();
 
     } catch (e) {
       state = TaskFailureState(errorMessage);
@@ -65,7 +65,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     try{
       await this._service.deleteTask(task);
       //On recharge les données
-      _getDataWithChangeState();
+      getDataWithoutLoadingList();
       //Message
       state=TaskSuccessState("Tâche supprimée");
     }catch(e){
@@ -84,7 +84,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     //On fait la mise à jour en cliquant sur le bouton
     await _service.updateTask(task.id!,task.toJsonUpdateIsCompleted());
     //Rechargement des données
-    await _getDataWithChangeState();
+    await getDataWithoutLoadingList();
   }
 
 
@@ -98,7 +98,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     }
   }
 
-  Future<void> _getDataWithChangeState() async{
+  Future<void> getDataWithoutLoadingList() async{
     //On recupère la liste
     final taskList = await _service.getAllTasks();
     if(taskList.isNotEmpty){

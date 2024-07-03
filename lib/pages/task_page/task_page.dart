@@ -82,9 +82,7 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
         centerTitle: true,
         leading: IconButton(
           onPressed: (){
-            context.go('/home');
-            //rechargement
-            ref.read(taskProvider.notifier).getTasks();
+            back(context,ref);
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -269,7 +267,7 @@ class _FormState extends ConsumerState<_FormContent>{
                 SizedBox(width: 16),
                 elevatedButton(
                     action: () {
-                      context.go('/home'); // Annuler et retourner à la page précédente
+                      back(context,ref);
                     },
                     label: 'Annuler',
                     colorText: primary,
