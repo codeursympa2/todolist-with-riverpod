@@ -83,6 +83,8 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
         leading: IconButton(
           onPressed: (){
             context.go('/home');
+            //rechargement
+            ref.read(taskProvider.notifier).getTasks();
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -117,26 +119,61 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
 
 }
 
-class _FormContent extends ConsumerWidget{
+class _FormContent extends ConsumerStatefulWidget{
   final String? id;
-  _FormContent({this.id,Key? key}):super(key: key);
+
+  const _FormContent({this.id,Key? key}):super(key: key);
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _FormState(id:this.id);
 
-    final _formKey = GlobalKey<FormState>();
-    final TextEditingController _nameController = TextEditingController();
-    final TextEditingController _descController = TextEditingController();
-    final FocusNode _nameFocusNode = FocusNode();
-    final FocusNode _descFocusNode = FocusNode();
 
-    if(id != null){
-      //Apres recupération
+
+}
+
+class _FormState extends ConsumerState<_FormContent>{
+  final String? id;
+  _FormState({required this.id});
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  final FocusNode _nameFocusNode = FocusNode();
+  final FocusNode _descFocusNode = FocusNode();
+
+  late bool _nameFocusable;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text="";
+    _descController.text="";
+
+    if(this.id == null){
+      _nameFocusable=true;
     }else{
-      _nameController.text="";
-      _descController.text="";
+      _nameFocusable=false;
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
+
+    //On écoute les changements d'etats de TaskState pour la mise à jour
+    ref.listen<TaskState>(taskProvider, (TaskState? previousState,TaskState state) async {
+      //
+      if(state is TaskEditingState){
+        //Validation du formulaire
+        ref.read(taskFormProvider.notifier).validForm(state.task);
+        setState(() {
+          _nameController.text = state.task.name ?? ""; // Assure que la valeur n'est pas null
+          _descController.text = state.task.desc ?? ""; // Assure que la valeur n'est pas null
+        });
+      }
+      if(state is TaskFailureState){
+        toastMessage(context: context, message: state.error, color: danger);
+      }
+    });
 
     return Padding(padding: EdgeInsets.all(16),
       child: Form(
@@ -148,7 +185,7 @@ class _FormContent extends ConsumerWidget{
               return texEditingField(
                   context: context,
                   label: 'Nom',
-                  focused: true,
+                  focused: _nameFocusable,
                   textInputAction: TextInputAction.next,
                   focusNode: _nameFocusNode,
                   ctrl:_nameController,
@@ -201,8 +238,7 @@ class _FormContent extends ConsumerWidget{
                   onFieldSubmitted: (value){
                     //Si le formulaire est valide
                     if(_formKey.currentState!.validate()){
-                      final task=Task.withoutId(_nameController.text, _descController.text);
-                      _logicToSave(context,ref, task);
+                      _logicToSave(ref,);
                     }
                   }
               );
@@ -221,12 +257,11 @@ class _FormContent extends ConsumerWidget{
                       background: primary,
                       colorText: secondary,
                       action: state is TaskFormValidated ? (){
-                        if (_formKey.currentState!.validate()) {
-                          final t=Task.withoutId(_nameController.text, _descController.text);
-                          _logicToSave(context, ref, t);
+                        if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                          _logicToSave(ref);
                         }
                       }:
-                      (){
+                        (){
                         toastMessage(context: context, message: "Formulaire invalide", color: danger);
                       }
                   );
@@ -250,12 +285,37 @@ class _FormContent extends ConsumerWidget{
     );
   }
 
-  void _logicToSave(BuildContext context,WidgetRef ref,Task taskSave){
-    FocusScope.of(context).unfocus(); //Suppression du focus sur le champs fermeture du clavier
-    //Sauvegarde
-    ref.read(taskProvider.notifier).saveTask(Task.withoutId(taskSave.name,taskSave.desc));
+  @override
+  Future<void> didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (widget.id != null) {
+      final id = int.tryParse(widget.id!);
+      if (id != null) {
+        //Recuperation du task via l'id
+        await ref.read(taskProvider.notifier).getTaskById(id);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descController.dispose();
+    super.dispose();
   }
 
 
+  Future<void> _logicToSave(WidgetRef ref) async {
+    FocusScope.of(context).unfocus(); //Suppression du focus sur le champs fermeture du clavier
+    late Task taskSave;
+    if(this.id == null){
+      taskSave=Task.withoutId(_nameController.text, _descController.text);
+    }else{
+      taskSave=Task.updateTask(int.tryParse(this.id!)!,_nameController.text, _descController.text);
+    }
+    //On sauvegarde
+    await ref.read(taskProvider.notifier).saveTask(taskSave);
+
+  }
 }
 

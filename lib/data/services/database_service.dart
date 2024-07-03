@@ -70,7 +70,7 @@ class DatabaseService{
 
       final maps = await db.query(
         _tableName,
-        where: "id = ?",
+        where: "id=?",
         whereArgs: [id],
         limit: 1,
       );

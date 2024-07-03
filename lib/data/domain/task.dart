@@ -7,7 +7,7 @@ class Task{
   Task({required this.id, required this.name, required this.desc, required this.isCompleted});
 
   Task.withoutId(this.name,this.desc);
-  Task.updateTask(this.name,this.desc,this.isCompleted);
+  Task.updateTask(this.id,this.name,this.desc);
 
 
   factory Task.fromJson(Map<String,dynamic> json) => Task(

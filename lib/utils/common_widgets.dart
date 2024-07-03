@@ -181,7 +181,9 @@ Widget _taskItem(BuildContext context,Task task,VoidCallback actionIconButton){
     color: secondary,
     elevation: 5,
     child: ListTile(
-      onTap: (){},
+      onTap: (){
+        context.goNamed('update', pathParameters: {'id': task.id.toString()});
+        },
       contentPadding: const EdgeInsets.symmetric(vertical: 9,horizontal: 9),
       subtitle: Text(task.desc,
         overflow: TextOverflow.visible,

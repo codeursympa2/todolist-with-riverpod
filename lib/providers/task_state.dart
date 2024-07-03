@@ -40,3 +40,9 @@ class TaskFailureState extends TaskState {
 
   const TaskFailureState(this.error);
 }
+
+//Etat edition task
+class TaskEditingState extends TaskState{
+  final Task task;
+  const TaskEditingState({required this.task});
+}

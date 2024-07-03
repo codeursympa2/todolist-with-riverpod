@@ -87,6 +87,17 @@ class TaskNotifier extends StateNotifier<TaskState> {
     await _getDataWithChangeState();
   }
 
+
+  //Recuperation d'une tache
+  Future<void> getTaskById(int id) async{
+    final Task? task=await this._service.getTask(id);
+    if(task != null){
+      state=TaskEditingState(task: task);
+    }else{
+      state=TaskFailureState(errorGetTask);
+    }
+  }
+
   Future<void> _getDataWithChangeState() async{
     //On recupère la liste
     final taskList = await _service.getAllTasks();
