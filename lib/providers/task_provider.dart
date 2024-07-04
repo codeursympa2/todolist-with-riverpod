@@ -30,9 +30,11 @@ class TaskNotifier extends StateNotifier<TaskState> {
 
     try {
       // Simulation de chargement de 2 secondes de la barre de progression
-      await Future.delayed(const Duration(seconds: 1));
-      //Recupération des données
-      this.getDataWithoutLoadingList();
+      await Future.delayed(const Duration(seconds: 1),(){
+        //Recupération des données
+         this.getDataWithoutLoadingList();
+      });
+
 
     } catch (e) {
       state = TaskFailureState(errorMessage);
@@ -107,5 +109,10 @@ class TaskNotifier extends StateNotifier<TaskState> {
     }else{
       state=TaskEmptyState(noData);
     }
+  }
+
+  Future<void> getTasksCount()async{
+    final int total=await _service.getTotalTasks();
+    state=TaskTotalList(total: total);
   }
 }

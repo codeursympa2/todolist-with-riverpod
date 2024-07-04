@@ -104,6 +104,17 @@ class DatabaseService{
       return result;
     }
 
+
+    Future<int>getTotalTasks() async{
+      final db = await instance.db;
+      final result = await db.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
+
+      // Extraire le nombre total à partir du résultat de la requête
+      int totalCount = Sqflite.firstIntValue(result) ?? 0;
+
+      return totalCount;
+    }
+    
     //Fermeturee de la connexion
     Future<void> closeConnexion() async{
       final db = await instance.db;

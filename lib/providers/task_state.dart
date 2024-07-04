@@ -46,3 +46,8 @@ class TaskEditingState extends TaskState{
   final Task task;
   const TaskEditingState({required this.task});
 }
+
+class TaskTotalList extends TaskState{
+  final int total;
+  const TaskTotalList({required this.total});
+}

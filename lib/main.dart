@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/strings.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todolist_with_riverpod/pages/cta_page/cta_page.dart';
 import 'package:todolist_with_riverpod/pages/home_page/home_page.dart';
 import 'package:todolist_with_riverpod/pages/splash_screen/splash_screen.dart';
 import 'package:todolist_with_riverpod/pages/task_page/task_page.dart';
@@ -36,6 +37,12 @@ final _router = GoRouter(
             //context. ('/');
             return const HomePage();
           },
+        ),
+        GoRoute(
+          path:'cta',
+          builder: (context,state){
+            return CtaPage();
+          }
         )
       ],
     ),
@@ -60,6 +67,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp.router(
       title: appNameComplete,
+      
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         //Configuration des polices à partir de figma

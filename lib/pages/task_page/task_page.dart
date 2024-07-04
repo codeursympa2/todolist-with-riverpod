@@ -41,6 +41,8 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    ref.read(taskProvider.notifier).disposeResources();
+    controller1.dispose();
   }
 
   @override
@@ -91,21 +93,7 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              width: gifSize,
-              height: gifSize,
-              child: Gif(
-                controller: controller1,
-                width: gifSize,
-                height: gifSize,
-                duration: Duration(seconds: 2),
-                autostart: Autostart.once,
-                placeholder: (context) =>
-                const Center(child: CircularProgressIndicator()),
-                image: const AssetImage('assets/images/ToDoList.gif'),
-              ),
-            )
-            ,
+            getGif(controller1, gifSizeAddTask,"ToDoList"),
             SizedBox(height: 10,),
             _FormContent(id:this.id)
           ],),
@@ -299,6 +287,7 @@ class _FormState extends ConsumerState<_FormContent>{
   void dispose() {
     _nameController.dispose();
     _descController.dispose();
+    ref.read(taskProvider.notifier).disposeResources();
     super.dispose();
   }
 

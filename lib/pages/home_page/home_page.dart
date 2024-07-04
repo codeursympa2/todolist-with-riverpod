@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
+import 'package:todolist_with_riverpod/constants/strings.dart';
 import 'package:todolist_with_riverpod/providers/task_provider.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
 import 'package:todolist_with_riverpod/utils/common_widgets.dart';
@@ -59,7 +60,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Center(child: Text("Liste des tâches",style: Theme.of(context).textTheme.headlineLarge,)),
+              SizedBox(height: 10,),
+              Center(child: Text(appNameComplete,style: Theme.of(context).textTheme.headlineLarge,)),
               //Chip options
               const SizedBox(height: 10,),
               Expanded(
@@ -78,6 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void dispose() {
     _listener.dispose();
+    ref.read(taskProvider.notifier).disposeResources();
     super.dispose();
   }
 

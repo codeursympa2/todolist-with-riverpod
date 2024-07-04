@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gif/gif.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todolist_with_riverpod/constants/colors.dart';
 import 'package:todolist_with_riverpod/constants/numbers.dart';
@@ -74,9 +75,9 @@ Widget contentHomePage(TaskState state,WidgetRef ref){
       },
     );
    
-  } else {
+  } else{
     return Center(
-      child: Text("Echec de connexion à la source de données"),
+      child: const CircularProgressIndicator(),
     );
   }
 }
@@ -174,23 +175,23 @@ OutlineInputBorder _inputBorder({required Color borderColor}){
 
 Widget _taskItem(BuildContext context,Task task,VoidCallback actionIconButton){
   return Card(
-
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(roundedCardTask),
     ),
     color: secondary,
     elevation: 5,
     child: ListTile(
+
       onTap: (){
         context.goNamed('update', pathParameters: {'id': task.id.toString()});
-        },
+      },
       contentPadding: const EdgeInsets.symmetric(vertical: 9,horizontal: 9),
-      subtitle: Text(task.desc,
+      subtitle: Text(truncateString(task.desc, 60),
         overflow: TextOverflow.visible,
         maxLines: 2
         ,style: Theme.of(context).textTheme.bodyMedium,),
       leading: _leftVerticalBarTask(task),
-      title:Text("${task.name}",style: Theme.of(context).textTheme.headlineMedium,),
+      title:Text("${truncateString(task.name, 25)}",style: Theme.of(context).textTheme.headlineMedium,),
       trailing: _iconTaskCardTransition(task,actionIconButton ),
     ),
   );
@@ -227,4 +228,71 @@ Future<void> back(BuildContext context,WidgetRef ref) async {
   context.go('/home');
   //rechargement
   await ref.read(taskProvider.notifier).getDataWithoutLoadingList();
+}
+
+Widget getGif(GifController controller,double gifSize,String fileName){
+  return SizedBox(
+    width: gifSize,
+    height: gifSize,
+    child: Gif(
+      controller: controller,
+      width: gifSize,
+      height: gifSize,
+      duration: Duration(seconds: 2),
+      autostart: Autostart.once,
+      placeholder: (context) =>
+      const Center(child: CircularProgressIndicator()),
+      image:  AssetImage('assets/images/$fileName.gif'),
+    ),
+  );
+}
+
+Widget getContentCta({required BuildContext context,required String screenMode}){
+  double sizedBox1=15.0;
+  double sizedBox2=121.0;
+
+  double ctaWidth=ctaButtonnWidth;
+
+  if(screenMode == "l"){
+    sizedBox1=10;
+    sizedBox2=60;
+    ctaWidth=ctaButtonnWidthLandscape;
+  }
+  return Container(
+    width: 315,
+    child: Column(
+    children: [
+      Text(welcome,style: Theme.of(context).textTheme.headlineLarge,),
+      SizedBox(height: sizedBox1,),
+      Text(startTextCta,
+        style: Theme.of(context).textTheme.bodyLarge,
+        maxLines: 4, textAlign: TextAlign.justify,
+        overflow: TextOverflow.visible,
+
+      ),
+      SizedBox(height: sizedBox2,),
+      ElevatedButton(
+          onPressed: (){
+            context.replace('/task');
+          },
+          style:ElevatedButton.styleFrom(
+              backgroundColor: primary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(roundedCardTask)
+              ),
+              minimumSize: Size(ctaWidth, ctaButtonnHeight)
+
+          ),
+          child: Text(startNow,style: Theme.of(context).textTheme.labelLarge,))
+    ],
+  ));
+}
+
+//Couper une chaine
+String truncateString(String text, int length) {
+  if (text.length <= length) {
+    return text;
+  } else {
+    return text.substring(0, length) + '...';
+  }
 }
