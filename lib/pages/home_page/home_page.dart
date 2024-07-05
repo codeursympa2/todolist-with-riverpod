@@ -6,7 +6,8 @@ import 'package:todolist_with_riverpod/constants/numbers.dart';
 import 'package:todolist_with_riverpod/constants/strings.dart';
 import 'package:todolist_with_riverpod/providers/task_provider.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
-import 'package:todolist_with_riverpod/utils/common_widgets.dart';
+import 'package:todolist_with_riverpod/utils/refactoring.dart';
+import 'package:todolist_with_riverpod/utils/task_common_widgets.dart';
 
 
 class HomePage extends ConsumerStatefulWidget {
@@ -80,7 +81,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void dispose() {
     _listener.dispose();
-    ref.read(taskProvider.notifier).disposeResources();
     super.dispose();
   }
 

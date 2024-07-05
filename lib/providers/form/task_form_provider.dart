@@ -19,7 +19,7 @@ class TaskFormNotifier extends StateNotifier<TaskFormState>{
 
    if(task.name==""){
      formInvalid=true;
-     stateNameMessage="Veiller saisir un nom.";
+     stateNameMessage="Veiller saisir un titre.";
    }else{
      stateNameMessage="";
    }

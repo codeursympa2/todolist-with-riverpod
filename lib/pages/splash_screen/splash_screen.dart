@@ -67,9 +67,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
   @override
   void dispose() {
-    super.dispose();
-    ref.read(taskProvider.notifier).disposeResources();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
+    super.dispose();
   }
 
 }

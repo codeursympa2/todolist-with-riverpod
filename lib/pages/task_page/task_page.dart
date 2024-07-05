@@ -9,6 +9,7 @@ import 'package:todolist_with_riverpod/providers/form/task_form_state.dart';
 import 'package:todolist_with_riverpod/providers/form/task_form_provider.dart';
 import 'package:todolist_with_riverpod/providers/task_provider.dart';
 import 'package:todolist_with_riverpod/providers/task_state.dart';
+import 'package:todolist_with_riverpod/utils/refactoring.dart';
 
 import '../../utils/common_widgets.dart';
 
@@ -39,10 +40,8 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    ref.read(taskProvider.notifier).disposeResources();
     controller1.dispose();
+    super.dispose();
   }
 
   @override
@@ -80,7 +79,7 @@ class _TaskState extends ConsumerState<TaskPage> with TickerProviderStateMixin{
 
     return  Scaffold(
       appBar: AppBar(
-        title: Text(id != null ? "Mis à jour d'une tâche":"Création d'une tâche",style: Theme.of(context).textTheme.headlineLarge,),
+        title: Text(id != null ? "Mise à jour d'une tâche":"Ajout d'une tâche",style: Theme.of(context).textTheme.headlineLarge,),
         centerTitle: true,
         leading: IconButton(
           onPressed: (){
@@ -112,9 +111,6 @@ class _FormContent extends ConsumerStatefulWidget{
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _FormState(id:this.id);
-
-
-
 }
 
 class _FormState extends ConsumerState<_FormContent>{
@@ -170,7 +166,7 @@ class _FormState extends ConsumerState<_FormContent>{
               final state =ref.watch(taskFormProvider);
               return texEditingField(
                   context: context,
-                  label: 'Nom',
+                  label: 'Titre',
                   focused: _nameFocusable,
                   textInputAction: TextInputAction.next,
                   focusNode: _nameFocusNode,
@@ -287,7 +283,6 @@ class _FormState extends ConsumerState<_FormContent>{
   void dispose() {
     _nameController.dispose();
     _descController.dispose();
-    ref.read(taskProvider.notifier).disposeResources();
     super.dispose();
   }
 
